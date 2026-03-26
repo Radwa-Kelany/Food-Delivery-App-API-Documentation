@@ -577,12 +577,6 @@
       "get": {
         "tags": ["Restaurants & Menu"],
         "summary": "get Restaurant data",
-        "security": [
-          {
-            "BearerAuth": [],
-            "CookieAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "restaurantId",
