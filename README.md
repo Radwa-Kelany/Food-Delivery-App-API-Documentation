@@ -51,24 +51,42 @@ using Swagger UI for Api docmentation
                           failed [400] bad request
         - Edit Profile
                 - method: put
-                - signature /api/v1/user/profile/:user_id
-                - input user_id,update_data{}
-                - output success [201]
+                - signature: /api/v1/user/profile/:user_id
+                - input: user_id, update_data{}
+                - output: success [201]
                          failed [ 401] unauthorized
                          failed [400] bad request
 #### Cart management 
         - AddToCart
-                - signature /api/v1/cart/add
-                - input [customer_id,cart_items[]]
-                - output status code [201]
+                - method: post
+                - signature: /api/v1/cart/add
+                - input: {customer_id, item__id}
+                - output: success [201]
+                          failed  [404] customer not found , item not found
+                          failed [400] bad request
         - ModifyCart
-                - signature /api/v1/cart/:cart_id
-                - input [cart_id, item_id, event_type]
-                - output status code [201]
+                - method: delete
+                - signature /api/v1/cart/modify/:cart_id
+                - input [item_id]
+                - output success [200]
+                         failed  [404] cart not found , item not found
+                         failed  [400] bad request
+                - method: put
+                - signature /api/v1/cart/modify/:cart_id
+                - input [item_id, event_type]
+                - output success [200]
+                         failed  [404] cart not found , item not found
+                         failed  [400] bad request
+        - viewCart
+                - method: get
+                - signature: /api/v1/cart/:cart_id
+                - output success [200]
+                         failed  [404] cart not found
         - clearCart
+                - method: delete
                 - signature /api/v1/cart/:cart_id
-                - input [customer_id,cart_id]
-                - output status code [200]
+                - output: success [200]
+                           failed  [404] cart not found
 #### Order management 
         - placeOrder
                 - signature /api/v1/order/add
