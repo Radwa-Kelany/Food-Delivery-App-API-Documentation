@@ -17,8 +17,12 @@
       "description": "Operations related to users"
     },
     {
-      "name": "Orders",
-      "description": "Operations related to orders"
+      "name": "Cart",
+      "description": "Operations related to cart"
+    },
+    {
+      "name": "Restaurants & Menu",
+      "description": "Operations related to Restaurants and their related menu"
     }
   ],
   "paths": {
@@ -305,24 +309,389 @@
         }
       }
     },
-    "/api/v1/orders": {
-      "get": {
-        "tags": ["Orders"],
-        "summary": "get all orders",
-
+    "/api/v1/cart/add": {
+      "post": {
+        "tags": ["Cart"],
+        "summary": "create cart and add items to it",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customerId": {
+                    "type": "string",
+                    "example": "48"
+                  },
+                  "itemId": {
+                    "type": "string",
+                    "example": "item_58"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "User Login Successfully",
+            "description": "Item added to cart successfully"
+          },
+          "404": {
+            "description": "Customer Not Found Or Item Not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/cart/modify/{cartId}": {
+      "delete": {
+        "tags": ["Cart"],
+        "summary": "remove item from cart",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "Cart ID",
+            "schema": {
+              "type": "string",
+              "example": "cart_10"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "itemId": {
+                    "type": "string",
+                    "example": "item_58"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item removed successfully"
+          },
+          "404": {
+            "description": "Cart Not Found Or Item Not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Cart"],
+        "summary": "increment /decrement item quantity in cart",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "Cart ID",
+            "schema": {
+              "type": "string",
+              "example": "cart_10"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "itemId": {
+                    "type": "string",
+                    "example": "item_58"
+                  },
+                  "event_type": {
+                    "type": "string",
+                    "enum": ["increment", "decrement"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully"
+          },
+          "404": {
+            "description": "Cart Not Found Or Item Not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/cart/{cartId}": {
+      "get": {
+        "tags": ["Cart"],
+        "summary": "view entire cart",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "Cart ID",
+            "schema": {
+              "type": "string",
+              "example": "cart_10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "cart items displayed successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/user"
+                  "$ref": "#/components/schemas/cartItems"
                 }
               }
             }
           },
-          "401": {
-            "description": "unauthorized user"
+          "404": {
+            "description": "Cart Not Found Or Item Not found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Cart"],
+        "summary": "delete entire cart",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "description": "Cart ID",
+            "schema": {
+              "type": "string",
+              "example": "cart_10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "entire cart removed successfully"
+          },
+          "404": {
+            "description": "Cart Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/restaurant/add": {
+      "post": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "Add Restaurant to app",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ownerId": {
+                    "type": "string",
+                    "example": "5"
+                  },
+                  "restaurantDetails": {
+                    "$ref": "#/components/schemas/restaurant"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "restaurant added successfully"
+          },
+          "404": {
+            "description": "Customer Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/restaurant/{restaurantId}": {
+      "get": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "get Restaurant data",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "description": "restaurant ID",
+            "schema": {
+              "type": "string",
+              "example": "restaurant_2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "restaurant data displayed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/menu"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "restaurant Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "update  Restaurant data",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "description": "restaurant ID",
+            "schema": {
+              "type": "string",
+              "example": "restaurant_2"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updatedDetails": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "restaurant updated successfully"
+          },
+          "404": {
+            "description": "restaurant Not Found or Owner Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "delete entire Restaurant",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "description": "restaurant ID",
+            "schema": {
+              "type": "string",
+              "example": "restaurant_2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "restaurant deleted successfully"
+          },
+          "404": {
+            "description": "restaurant Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -345,6 +714,91 @@
           "password": {
             "type": "string",
             "example": "password"
+          }
+        }
+      },
+      "cartItems": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "Burger"
+            },
+            "description": {
+              "type": "string",
+              "example": "Beef burger with spicy sauce"
+            },
+            "image": {
+              "type": "string",
+              "example": "url"
+            },
+            "price": {
+              "type": "integer",
+              "example": 25
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 2
+            }
+          }
+        }
+      },
+      "restaurant": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Pizza House"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+011111111"
+          },
+          "location": {
+            "type": "string",
+            "example": "UK,Liverpool,Roger Street"
+          },
+          "category": {
+            "type": "string",
+            "example": "Bakery"
+          }
+        }
+      },
+      "menu": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "menu_category": {
+              "type": "string",
+              "example": "Grilled"
+            },
+            "menu_items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item_name": {
+                    "type": "string",
+                    "example": "Grilled Chicken"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Grilled Chicken with Salad and rice"
+                  },
+                  "image": {
+                    "type": "string",
+                    "example": "url"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 65
+                  }
+                }
+              }
+            }
           }
         }
       },

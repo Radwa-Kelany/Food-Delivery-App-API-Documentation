@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // src/index.ts
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
