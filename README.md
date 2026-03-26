@@ -1,7 +1,7 @@
 # Food-Delivery-App-API-Documentation
 using Swagger UI for Api docmentation
 
- [Api Documentation]([https://github.com/username/repo-name](https://food-delivery-app-api-documentation.onrender.com/api-docs/)
+ [Api Documentation](https://food-delivery-app-api-documentation.onrender.com/api-docs/)
 
 ### API Signature 
 #### User Registeration
