@@ -89,12 +89,13 @@ using Swagger UI for Api docmentation
                            failed  [404] cart not found
 #### Order management 
         - placeOrder
+                - method: post
                 - signature /api/v1/order/add
-                - input [customer_id,order_items[]]
+                - input [customer_id, cart_id]
                 - output status code [201]
         - cancelOrder
                 - signature /api/v1/order/cancel
-                - input [customer_id,order_id]
+                - input [customer_id, order_id]
                 - output status code [200]
         - trackOrder
                 - signature /api/v1/order/track
@@ -114,25 +115,38 @@ using Swagger UI for Api docmentation
                 - output status code 201, transaction_details
 #### Resturant & Menu management 
         - AddResturant
-                - signature /api/v1/Resturant/add
-                - input [partner_id,Resturant_details]
-                - output status code [201]
-        - updateResturant = put
-                - signature /api/v1/resturant/:resturant_id
-                - input [resturant_id,updated_data]
-                - output status code [201]
-        - deleteResturant
+                - method: post
+                - signature /api/v1/resturant/add
+                - input [owner_id, Resturant_details{}]
+                - output: success [201]
+                          failed  [404] owner not found
+                          failed [400] bad request
+        - viewResturant
+                - method: get
                 - signature /api/v1/resturant/:resturant_id
                 - input [resturant_id]
-                - output status code 200
+                - output: success [200] restaurant_details {}, menu []
+                          failed  [404] owner not found
+                          failed [400] bad request
+        - updateResturant 
+                - method:  put
+                - signature /api/v1/resturant/:resturant_id
+                - input [updated_data]
+                - output: success [201]
+                          failed  [404]restuarant not found,  owner not found
+                          failed  [400] bad request
+        - deleteResturant
+                - method: delete
+                - signature /api/v1/resturant/:resturant_id
+                - input [resturant_id]
+                - output: success [200]
+                          failed  [404] restuarant not found
+                          failed  [400] bad request
         - viewResturants
                 - signature /api/v1/resturant
                 - input []
                 - output resturants[]
-        - viewResturant
-                - signature /api/v1/resturant/:resturant_id
-                - input [resturant_id]
-                - output resturant_details{}
+
         - addMenu
                 - signature /api/v1/resturant/menu/add
                 - input [resturant_id,menu_details]
