@@ -120,12 +120,12 @@ using Swagger UI for Api docmentation
                 - input [owner_id, Resturant_details{}]
                 - output: success [201]
                           failed  [404] owner not found
-                          failed [400] bad request
+                          failed  [400] bad request
         - viewResturant
                 - method: get
                 - signature /api/v1/resturant/:resturant_id
                 - input [resturant_id]
-                - output: success [200] restaurant_details {}, menu []
+                - output: success [200]{ restaurant_name, menus []}
                           failed  [404] owner not found
                           failed [400] bad request
         - updateResturant 
@@ -142,27 +142,41 @@ using Swagger UI for Api docmentation
                 - output: success [200]
                           failed  [404] restuarant not found
                           failed  [400] bad request
-        - viewResturants
-                - signature /api/v1/resturant
-                - input []
-                - output resturants[]
-
         - addMenu
+                - method: post
                 - signature /api/v1/resturant/menu/add
-                - input [resturant_id,menu_details]
-                - output status code [201]
-        - updateMenu
-                - signature /api/v1/resturant/menu/:menu_id
-                - input [menu_id, update_data]
-                - output status code [201]
-        - deleteMenu
-                - signature /api/v1/resturant/menu/:menu_id
-                - input [menu_id]
-                - output status code [200]
+                - input [resturant_id, menu_details{}]
+                - output: success [201]
+                          failed  [404] restaurant not found
+                          failed  [400] bad request
         - viewMenu
+                - method: get
                 - signature /api/v1/resturant/menu/:menu_id
-                - input [menu_id]
-                - output menu_details
+                - input [restaurant_id, menu_id]
+                - output: success [200] menuDetails{}
+                          failed  [404] restaurant not found, menu not found
+                          failed  [400] bad request
+        - updateMenu
+                - method: put
+                - signature /api/v1/resturant/menu/:menu_id
+                - input [restaurant_id, menu_id, update_data]
+                - output: success [201]
+                          failed  [404] restaurant not found, menu not found
+                          failed  [400] bad request
+        - deleteMenu
+                - method: delete
+                - signature /api/v1/resturant/menu/:menu_id
+                - input [restaurant_id, menu_id]
+                - output: success [200]
+                          failed  [404] restaurant not found, menu not found
+                          failed  [400] bad request
+        - viewResturants
+                -  method: get
+                - signature /api/v1/resturants
+                - input []
+                - output: success [200] restuarnts[]
+                          failed  [404] No restaurants
+                          failed  [400] bad request
         - filterMenu
                 - signature /api/v1/resturant/menu/filter
                 - input [search_word]
