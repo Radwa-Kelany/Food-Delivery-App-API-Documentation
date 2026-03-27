@@ -92,27 +92,50 @@ using Swagger UI for Api docmentation
                 - method: post
                 - signature /api/v1/order/add
                 - input [customer_id, cart_id]
-                - output status code [201]
-        - cancelOrder
-                - signature /api/v1/order/cancel
-                - input [customer_id, order_id]
-                - output status code [200]
-        - trackOrder
-                - signature /api/v1/order/track
-                - input [customer_id,order_id]
-                - output order_status
+                - output success [201]
+                         failed  [401] customer not authorized
+                         failed  [400] bad request
         - viewOrder
+                - method: get
                 - signature /api/v1/order/:order_id
-                - input [customer_id,order_id]
-                - output order_details
-        - viewOrders_History
-                - signature /api/v1/order
-                - input [customer_id]
-                - output orders[]
+                - input [order_id]
+                - output success [200] order_details{}
+                         failed  [401] customer not authorized
+                         failed  [400] bad request
+                         failed  [404] not found
+        - cancelOrder
+                - method: delete
+                - signature /api/v1/order/{orderId}
+                - input [customer_id, order_id]
+                - output success [200]
+                         failed  [401] customer not authorized
+                         failed  [400] bad request
+                         failed  [404] not found
+        - trackOrder
+                - method: get
+                - signature /api/v1/order/track/{orderId}
+                - input [order_id]
+                - output success [200] order_status
+                         failed  [401] customer not authorized
+                         failed  [400] bad request
+                         failed  [404] not found
          - Checkout
-                - signature /api/v1/checkout
-                - input [customer_id, payment_type, total_price]
-                - output status code 201, transaction_details
+                - method: post
+                - signature /api/v1/order/checkout
+                - input [customer_id,order_id, payment_type, location]
+                - output success [200]
+                         failed  [401] customer not authorized
+                         failed  [400] bad request
+                         failed  [404] not found
+        - viewOrders_History
+                - method: get
+                - signature /api/v1/orders
+                - input [customer_id]
+                - output success [200] orders[]
+                         failed  [401] customer not authorized
+                         failed  [400] bad request
+                         failed  [404] not found
+
 #### Resturant & Menu management 
         - AddResturant
                 - method: post
@@ -177,10 +200,6 @@ using Swagger UI for Api docmentation
                 - output: success [200] restuarnts[]
                           failed  [404] No restaurants
                           failed  [400] bad request
-        - filterMenu
-                - signature /api/v1/resturant/menu/filter
-                - input [search_word]
-                - output menu_details[]
   #### Payment management 
         - View Payment Transaction
                 - signature /api/v1/payment/transaction
