@@ -23,6 +23,14 @@
     {
       "name": "Restaurants & Menu",
       "description": "Operations related to Restaurants and their related menu"
+    },
+    {
+      "name": "Orders",
+      "description": "Operations related to orders"
+    },
+    {
+      "name": "Payments",
+      "description": "Operations related to payments"
     }
   ],
   "paths": {
@@ -579,7 +587,7 @@
         "summary": "get Restaurant data",
         "parameters": [
           {
-            "name": "restaurantId",
+            "name": "restaurant_id",
             "in": "path",
             "required": true,
             "description": "restaurant ID",
@@ -595,7 +603,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/menu"
+                  "type": "object",
+                  "properties": {
+                    "restaurant_name": {
+                      "type": "string",
+                      "example": "Pizza House"
+                    },
+                    "menus": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/menu"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -689,8 +710,596 @@
           }
         }
       }
+    },
+    "/api/v1/restaurant/menu/add": {
+      "post": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "Add menu Restaurant",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "restaurantId": {
+                    "type": "string",
+                    "example": "restaurant_2"
+                  },
+                  "menuDetails": {
+                    "$ref": "#/components/schemas/menu"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "menu added successfully"
+          },
+          "404": {
+            "description": "restaurant Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/restaurant/menu/{menuId}": {
+      "get": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "get menu data of specific restaurant",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "description": "restaurant ID",
+            "schema": {
+              "type": "string",
+              "example": "restaurant_2"
+            }
+          },
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "description": "menu ID",
+            "schema": {
+              "type": "string",
+              "example": "menu_2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "menu data displayed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/menu"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "restaurant Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "update menu of specific restaurant",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "description": "restaurant ID",
+            "schema": {
+              "type": "string",
+              "example": "restaurant_2"
+            }
+          },
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "description": "menu ID",
+            "schema": {
+              "type": "string",
+              "example": "menu_2"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updatedDetails": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "menu updated successfully"
+          },
+          "404": {
+            "description": "restaurant Not Found or menu Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "delete entire menu of Restaurant",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "description": "restaurant ID",
+            "schema": {
+              "type": "string",
+              "example": "restaurant_2"
+            }
+          },
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "description": "menu ID",
+            "schema": {
+              "type": "string",
+              "example": "menu_2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "menu deleted successfully"
+          },
+          "404": {
+            "description": "menu Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants": {
+      "get": {
+        "tags": ["Restaurants & Menu"],
+        "summary": "view all restaurants",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "restaurants displayed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "Pizza House"
+                      },
+                      "image": {
+                        "type": "string",
+                        "example": "url"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "Italian Restaurant for all kinds od pasta and pizza"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No Restaurants Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/order/add": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "place order",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "example": "62"
+                  },
+                  "cart_id": {
+                    "type": "string",
+                    "example": "cart_50"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order is pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "order_id": {
+                      "type": "string",
+                      "example": "order_155"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/order/{orderId}": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "view order details",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "description": "order ID",
+            "schema": {
+              "type": "string",
+              "example": "order_201"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "example": "62"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "order items is displayed Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "order_PIN_number": {
+                      "type": "string",
+                      "example": "#158796"
+                    },
+                    "order_items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/order_item_details"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Orders"],
+        "summary": "cancel order",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "description": "order ID",
+            "schema": {
+              "type": "string",
+              "example": "order_201"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "example": "62"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "order is cancelled Successfully"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/order/track/{orderId}": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "track order status",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "description": "order ID",
+            "schema": {
+              "type": "string",
+              "example": "order_201"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "order status tracking",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "order_status": {
+                      "type": "string",
+                      "example": "order is processed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/order/checkout": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "complete checkout process",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "example": "62"
+                  },
+                  "order_id": {
+                    "type": "string",
+                    "example": "order_50"
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "Giza, El-wady St., building 6, floor 3"
+                  },
+                  "payment_method": {
+                    "type": "string",
+                    "example": "visa"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "payment process is completed successfully"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/orders": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "view all orders history of customer",
+        "security": [
+          {
+            "BearerAuth": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "example": "62"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "all orders is displayed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "order_PIN_number": {
+                        "type": "string",
+                        "example": "#158796"
+                      },
+                      "order_item_details": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "$ref": "#/components/schemas/order_item_details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
     }
   },
+
   "components": {
     "schemas": {
       "user": {
@@ -746,6 +1355,15 @@
             "type": "string",
             "example": "Pizza House"
           },
+          "image": {
+            "type": "string",
+            "example": "url"
+          },
+          "description": {
+            "type": "string",
+            "example": "Italian Restaurant for all kinds od pasta and pizza"
+          },
+
           "phone": {
             "type": "string",
             "example": "+011111111"
@@ -761,38 +1379,56 @@
         }
       },
       "menu": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "menu_category": {
-              "type": "string",
-              "example": "Grilled"
-            },
-            "menu_items": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "item_name": {
-                    "type": "string",
-                    "example": "Grilled Chicken"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Grilled Chicken with Salad and rice"
-                  },
-                  "image": {
-                    "type": "string",
-                    "example": "url"
-                  },
-                  "price": {
-                    "type": "integer",
-                    "example": 65
-                  }
+        "type": "object",
+        "properties": {
+          "menu_category": {
+            "type": "string",
+            "example": "Grilled"
+          },
+          "menu_items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item_name": {
+                  "type": "string",
+                  "example": "Grilled Chicken"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Grilled Chicken with Salad and rice"
+                },
+                "image": {
+                  "type": "string",
+                  "example": "url"
+                },
+                "price": {
+                  "type": "integer",
+                  "example": 65
                 }
               }
             }
+          }
+        }
+      },
+      "order_item_details": {
+        "type": "object",
+        "properties": {
+          "item_name": {
+            "type": "string",
+            "example": "Grilled Chicken"
+          },
+          "image": {
+            "type": "string",
+            "example": "url"
+          },
+          "price": {
+            "type": "integer",
+            "example": 65
+          },
+          "quantity": {
+            "type": "integer",
+            "example": 1
           }
         }
       },
